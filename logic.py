@@ -1,6 +1,22 @@
 def feedback(code, guess):
+    """Return (exact, partial) matches without reusing code occurrences."""
+    exact = 0
+    remaining_code = []
+    remaining_guess = []
 
-    # the code, so duplicate symbols can consume the same code occurrence.
-    exact = sum(a == b for a, b in zip(code, guess))
-    partial = sum(ch in code for ch in guess) - exact
+    # Exact matches are resolved first.
+    for code_symbol, guess_symbol in zip(code, guess):
+        if code_symbol == guess_symbol:
+            exact += 1
+        else:
+            remaining_code.append(code_symbol)
+            remaining_guess.append(guess_symbol)
+
+    # Each remaining code occurrence can be used only once.
+    partial = 0
+    for guess_symbol in remaining_guess:
+        if guess_symbol in remaining_code:
+            partial += 1
+            remaining_code.remove(guess_symbol)
+
     return exact, partial
